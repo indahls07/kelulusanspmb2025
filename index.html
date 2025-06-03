@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pengumuman Kelulusan SMKN 5 Selayar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eaf4ff;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      color: #004a99;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Pengumuman Kelulusan SMKN 5 Selayar</h1>
+
+  <p>Masukkan NISN Anda untuk melihat hasil kelulusan:</p>
+  <input type="text" id="nisnInput" placeholder="Masukkan NISN">
+  <br><br>
+  <button onclick="cekKelulusan()">Cek Kelulusan</button>
+
+  <div id="hasil" class="result"></div>
+
+  <script>
+    // Contoh data siswa (bisa diperluas atau diganti dari database)
+    const dataSiswa = [
+      { nisn: "0099904377", nama: "ULIL AMRI", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0092250807", nama: "ANDI RADITYA PRATAMA PUTRA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0108748238", nama: "KHAERUNNISA SUNARYA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0104388525", nama: "NUR NARARYA HASAN", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0109791606", nama: "IKRAM MAWAN SAPUTRA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0103646874", nama: "SITI AMELIA N. MADINA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0076313010", nama: "NURUL HIKMA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0086161479", nama: "IRMAYANA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0101606106", nama: "REZKY PRATAMA PUTRA", jurusan: "Teknik Jaringan Komputer dan Telekomunikasi (TJKT)" },
+      { nisn: "0103195262", nama: "PAHLEVI ALFAJRI PRATAMA", jurusan: "Pengembangan Perangkat Lunak dan GIM (PPLG)" },
+      { nisn: "0097367652", nama: "MUH. FADHLI DZIL IKRAM", jurusan: "Pengembangan Perangkat Lunak dan GIM (PPLG)" },
+      { nisn: "3101042307", nama: "YOGI SAPUTRA", jurusan: "Pengembangan Perangkat Lunak dan GIM (PPLG)" },
+      { nisn: "3106699612", nama: "MUH. TAUFIK", jurusan: "Pengembangan Perangkat Lunak dan GIM (PPLG)" },
+      { nisn: "3084382681", nama: "NURSAN AFRIANTO", jurusan: "Pengembangan Perangkat Lunak dan GIM (PPLG)" },
+      { nisn: "0096998492", nama: "AULIA CITRA", jurusan: "Pengembangan Perangkat Lunak dan GIM (PPLG)" },
+      { nisn: "0097594334", nama: "Namirda Namirsa", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0098038489", nama: "Riska Padila", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0108433909", nama: "DELLA SARY PUTRY", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0095516326", nama: "AHRIANTI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0102740527", nama: "NADRATU AZZA LAIZA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0098767400", nama: "Fina Naylatul Izza", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0103501167", nama: "TASRIYANTI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0096053702", nama: "AHMAD ARYADI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0102504539", nama: "SAKINA MAWADDA WARAHMA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "3099020278", nama: "ANDRIYANA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0105806835", nama: "RIBKA TRISILIA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0099299722", nama: "Sri Mulyani Indrawati", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0104010263", nama: "Asma Asri", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0109936881", nama: "MEI AMBIKA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0108533806", nama: "Arvita Regina Putri", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0097223833", nama: "NUR ALFIANA SAID", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0107823975", nama: "Darul Falaq", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0107614653", nama: "APRILIAH ANANDA SYAFITRI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0097550505", nama: "NUR ASIFA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "3103082309", nama: "HARISYA SYARIF", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "3097817911", nama: "SILFA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0107124515", nama: "AULIA PUTRI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0099354546", nama: "NUR INDAH PRATIWI AR.", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0101136510", nama: "Nur Ainum Musdalifahtra", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0091083108", nama: "POPPY ADINDA PUTRI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0095928357", nama: "JULIA PARAMITHA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0094915785", nama: "YULIA PRATIWI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0107922205", nama: "MUFIDAH", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0096190967", nama: "Nur Azizal Muchtar", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0087760295", nama: "Andi Pitra", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0093660370", nama: "ROSMITA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0107574336", nama: "Ardyna Rasty", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0087948726", nama: "Saldi", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0108800235", nama: "Indriyani", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0101254659", nama: "SAFA FAUZIAH ARTAB", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0109896376", nama: "SUKMA AYU", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0091958177", nama: "LUNA ANGRAENI PASYA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0107039997", nama: "ZAIDAN RIZKINAH", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0102313077", nama: "WA ODE KHAYRAH PUTRI LATIFFAH", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0091935526", nama: "A. ROSMAWATI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0105985893", nama: "Suci Damayanti", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0104764749", nama: "NUR SAKINA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0106175765", nama: "SITTI FATIMAH", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0098538971", nama: "MUH. FADLI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0102481641", nama: "Aziizah Caesar Milan", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0097825125", nama: "RESITA HIJRIANI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0101466567", nama: "MAGFIRATUL JANNAH", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0108640468", nama: "Wahyuni Anrah", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0108218548", nama: "NOVA INDRIANA", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "3106554025", nama: "ZAHIRA NAJMIAH NUR", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0109464863", nama: "ALENA REGINA PUTRI", jurusan: "Layanan Kesehatan (LK)" },
+      { nisn: "0105903060", nama: "Nindi Aprilia", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0101976162", nama: "Azzam Alfarizi Mahsa", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0092378212", nama: "SUMIRA", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0079093419", nama: "PANIA RAMADANI", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0092773527", nama: "ADELIA SYAM", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0091152170", nama: "RAHMAWATI", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "3104178847", nama: "MARWAH THUSSOLIQAH", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0108195787", nama: "Nina Vixiaggi", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0103029021", nama: "Dinda Aulia Annisa", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0098752259", nama: "WILDA AULIA", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "3104971144", nama: "JESIKA ADELIA", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0099679428", nama: "MIDASARI", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0103648782", nama: "NUR FEBRI AULIA IHSAN", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "0094846578", nama: "Amriani", jurusan: "Teknologi Farmasi (TF)" },
+      { nisn: "3091187813", nama: "SALSABILA", jurusan: "Teknologi Farmasi (TF)" },
+    ];
+
+    function cekKelulusan() {
+      const nisnInput = document.getElementById("nisnInput").value.trim();
+      const hasil = document.getElementById("hasil");
+
+      const siswa = dataSiswa.find(s => s.nisn === nisnInput);
+
+      if (siswa) {
+        hasil.className = "result";
+        hasil.style.display = "block";
+        hasil.innerHTML = `
+          🎉 <strong>SELAMAT ${siswa.nama.toUpperCase()}!</strong><br>
+          ANDA LULUS DI SMKN 5 SELAYAR<br>
+          Jurusan: <strong>${siswa.jurusan}</strong>
+        `;
+      } else {
+        hasil.className = "result error";
+        hasil.style.display = "block";
+        hasil.innerHTML = `❌ NISN tidak ditemukan. Silakan periksa kembali.`;
+      }
+    }
+  </script>
+
+</body>
+</html>
